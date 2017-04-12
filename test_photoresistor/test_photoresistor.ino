@@ -14,7 +14,7 @@ values gives higher readings) from pin 0 to GND. (see appendix of arduino notebo
 ----------------------------------------------------
 */
 
-int lightPin = 6;  //define a pin for Photo resistor
+int lightPin = 12;  //define a pin for Photo resistor
 int ledPin=7;     //define a pin for LED
 
 void setup()

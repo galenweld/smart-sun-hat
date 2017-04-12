@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 6
+#define PIN 10
+int d = 50;
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = pin number (most are valid)
@@ -9,7 +10,7 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, PIN, NEO_GRB + NEO_KHZ800);
 
 uint32_t red = strip.Color(255, 0, 0);
 uint32_t green = strip.Color(0, 255, 255);
@@ -24,14 +25,12 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   strip.setPixelColor(0, red);
+  strip.setPixelColor(1, blue);
   strip.show();
-  delay(1000);
+  delay(d);
   
   strip.setPixelColor(0, blue);
+  strip.setPixelColor(1, red);
   strip.show();
-  delay(1000);
-
-  strip.setPixelColor(0, green);
-  strip.show();
-  delay(1000);
+  delay(d);
 }

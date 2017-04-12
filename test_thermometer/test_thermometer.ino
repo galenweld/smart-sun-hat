@@ -1,4 +1,4 @@
-const int tempSensorPin = 6;  
+const int tempSensorPin = 9;  
 int sensorValue = 0;       
 float degreesC = 0;
 
