@@ -57,7 +57,7 @@ void loop() {
   uvLight /= 100.0;
 
   //temperature sensor
-  temp = analogRead(tempSensorPin);
+  temp = analogRead(tempSensor);
   temp = temp/2.046 - 50.0;
   
   //==============OUTPUTS==============
@@ -94,7 +94,7 @@ void loop() {
   
   //led output for the second led, will indicate visible light
   //from green at low light to orange at high light
-` if(visLight >= 220){
+ if(visLight >= 220){
     strip.setPixelColor(1, orange);
     strip.show();
   }
