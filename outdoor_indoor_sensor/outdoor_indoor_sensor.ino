@@ -8,11 +8,13 @@
 
 int solarExposure;
 
-int highLight = 50;
-int highWarning = 100;
+const int visThresh = 270;
 
-int lowLight = -50;
-int lowWarning = -100;
+const int highLight = 50;
+const int highWarning = 100;
+
+const int lowLight = -50;
+const int lowWarning = -100;
 
 //pins
 const int buzzer = 6; //buzzer to pin 6
@@ -57,12 +59,13 @@ void loop() {
   float uvLight;
   float visLight;
 
-  visLight = analogRead(photoResistor);
+  //visLight = analogRead(photoResistor);
+  visLight = uv.readVisible();
 
-  if (visLight > 58) {
+  if (visLight > visThresh) {
     solarExposure ++;
   }
-  else if (visLight <= 58) {
+  else if (visLight <= visThresh) {
     solarExposure --;
   }
   
@@ -76,12 +79,16 @@ void loop() {
     strip.setPixelColor(0, green);
     strip.setPixelColor(1, green);
     strip.show();
+
+    noTone(buzzer);
   }
 
   if (solarExposure > highLight) {
     strip.setPixelColor(0, red);
     strip.setPixelColor(1, red);
     strip.show();
+
+    noTone(buzzer);
   }
 
   if (solarExposure > highWarning) {
@@ -92,6 +99,8 @@ void loop() {
     strip.setPixelColor(0, blue);
     strip.setPixelColor(1, blue);
     strip.show();
+
+    noTone(buzzer);
   }
 
   if (solarExposure < lowWarning) {
@@ -99,5 +108,5 @@ void loop() {
   }
 
   
-  delay(100);
+  delay(1000);
 }
