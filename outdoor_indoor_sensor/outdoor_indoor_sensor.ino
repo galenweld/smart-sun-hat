@@ -6,9 +6,13 @@
 #include "Adafruit_SI1145.h"
 #include <Adafruit_NeoPixel.h>
 
-float temp;
-float uvLight;
-float visLight;
+int solarExposure;
+
+int highLight = 50;
+int highWarning = 100;
+
+int lowLight = -50;
+int lowWarning = -100;
 
 //pins
 const int buzzer = 6; //buzzer to pin 6
@@ -43,73 +47,57 @@ void setup() {
   //leds
   strip.begin();
   strip.show();
+
+  solarExposure = 0;
 }
 
 void loop() {
   //==============INPUTS==============
-  //photo resistor
-  //visLight = analogRead(photoResistor); // this line will use the photoresistor for visible light
-  visLight = uv.readVisible();
-  visLight /= 4;
-  
-  //uv sensor
-  uvLight = uv.readUV();
-  uvLight /= 100.0;
+  float temp;
+  float uvLight;
+  float visLight;
 
-  //temperature sensor
-  temp = analogRead(tempSensor)/2.046 - 50.0;
+  visLight = analogRead(photoResistor);
+
+  if (visLight > 58) {
+    solarExposure ++;
+  }
+  else if (visLight <= 58) {
+    solarExposure --;
+  }
   
   //==============OUTPUTS==============
   Serial.print("UV: "); Serial.println(uvLight);
   Serial.print("Visible: "); Serial.println(visLight);
   Serial.print("Temp: "); Serial.println(temp);
+  Serial.print("Solar Exposure: "); Serial.println(solarExposure);
   
-  if(uvLight >= 5){
-    tone(buzzer, 1000);
-    delay(1000);
-    noTone(buzzer);
-    delay(1000);
-  }
-  else if(uvLight >= 3){
-    tone(buzzer, 500);
-    delay(500);
-    noTone(buzzer);
-    delay(2000);
-  }
-  else{
-    tone(buzzer, 250);
-    delay(250);
-    noTone(buzzer);
-    delay(4000);
-  }
-  //led output for the first led, will indicate temperature
-  //from blue at low temps to red at hot temps
-  if(temp >= 75){
-    strip.setPixelColor(0, red);
-    strip.show();
-  }
-  else if(temp >= 60){
+  if (solarExposure < highWarning && solarExposure > lowWarning) {
     strip.setPixelColor(0, green);
-    strip.show();
-  }
-  else{
-    strip.setPixelColor(0, blue);
-    strip.show();
-  }
-  
-  //led output for the second led, will indicate visible light
-  //from green at low light to orange at high light
-  if(visLight >= 90){
-    strip.setPixelColor(1, red);
-    strip.show();
-  }
-  else if (visLight >= 60){
     strip.setPixelColor(1, green);
     strip.show();
   }
-  else{
-    strip.setPixelColor(1, purple);
+
+  if (solarExposure > highLight) {
+    strip.setPixelColor(0, red);
+    strip.setPixelColor(1, red);
     strip.show();
   }
+
+  if (solarExposure > highWarning) {
+    tone(buzzer, 1000);
+  }
+
+  if (solarExposure < lowLight) {
+    strip.setPixelColor(0, blue);
+    strip.setPixelColor(1, blue);
+    strip.show();
+  }
+
+  if (solarExposure < lowWarning) {
+    tone(buzzer, 250);
+  }
+
+  
   delay(100);
 }
