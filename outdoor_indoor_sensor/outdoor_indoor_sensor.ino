@@ -16,6 +16,8 @@ const int highWarning = 100;
 const int lowLight = -50;
 const int lowWarning = -100;
 
+const int uvThreshold = 3;
+
 //pins
 const int buzzer = 6; //buzzer to pin 6
 const int photoResistor = 12; //photoresistor to pin 9
@@ -59,14 +61,19 @@ void loop() {
   float uvLight;
   float visLight;
 
-  //visLight = analogRead(photoResistor);
   visLight = uv.readVisible();
-
+  uvLight = uv.readUV();
+  uvLight /= 100.0;
+  
   if (visLight > visThresh) {
     solarExposure ++;
   }
   else if (visLight <= visThresh) {
     solarExposure --;
+  }
+
+  if(uvLight > uvThreshold){
+    solarExposure ++;  
   }
   
   //==============OUTPUTS==============
@@ -107,6 +114,5 @@ void loop() {
     tone(buzzer, 250);
   }
 
-  
   delay(1000);
 }
