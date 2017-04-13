@@ -15,7 +15,10 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, PIN, NEO_GRB + NEO_KHZ800);
 uint32_t red = strip.Color(255, 0, 0);
 uint32_t green = strip.Color(0, 255, 255);
 uint32_t blue = strip.Color(0, 0, 255);
-    
+
+uint32_t purple = strip.Color(255, 0, 255);
+uint32_t yellow = strip.Color(255, 255, 0);
+uint32_t orange = strip.Color(255, 144, 0);
 
 void setup() {
   strip.begin();

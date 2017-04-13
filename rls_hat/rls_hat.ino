@@ -25,12 +25,12 @@ void loop() {
   strip.setPixelColor(0, red);
   strip.setPixelColor(1, blue);
   strip.show();
-  tone(buzzer_pin, 1000);
+  //tone(buzzer_pin, 1000);
   delay(delay_time);
   
   strip.setPixelColor(0, blue);
   strip.setPixelColor(1, red);
   strip.show();
-  tone(buzzer_pin, 8000);
+  //tone(buzzer_pin, 8000);
   delay(delay_time);
 }

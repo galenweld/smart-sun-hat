@@ -7,17 +7,17 @@
 #include <Adafruit_NeoPixel.h>
 
 float temp;
-float visLight;
 float uvLight;
+float visLight;
 
 //pins
 const int buzzer = 6; //buzzer to pin 6
-const int photoResistor = 9; //photoresistor to pin 9
+const int photoResistor = 12; //photoresistor to pin 9
 const int led = 10; //led to pin 10
-const int tempSensor = 12; //temperature sensor to pin 12
+const int tempSensor = 9; //temperature sensor to pin 12
 
 Adafruit_SI1145 uv = Adafruit_SI1145();
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, led, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, led, NEO_GRB + NEO_KHZ800);
 
 uint32_t red = strip.Color(255, 0, 0);
 uint32_t purple = strip.Color(255, 0, 255);
@@ -30,18 +30,16 @@ uint32_t orange = strip.Color(255, 144, 0);
 void setup() {
   //Begins serial communcation with temperature sensor, photoresistor
   Serial.begin(9600);
-
-  //led
-  pinMode(led, OUTPUT);
+  
+  //photoresistor
+  pinMode(photoResistor, INPUT);
   //buzzer
   pinMode(buzzer, OUTPUT);
-
   //uv sensor
   if (! uv.begin()) {
     Serial.println("Didn't find Si1145");
     while (1);
   }
-
   //leds
   strip.begin();
   strip.show();
@@ -50,41 +48,49 @@ void setup() {
 void loop() {
   //==============INPUTS==============
   //photo resistor
-  visLight = analogRead(photoResistor);
-
+  //visLight = analogRead(photoResistor);
+  visLight = uv.readVisible();
+  visLight /= 4;
   //uv sensor
   uvLight = uv.readUV();
   uvLight /= 100.0;
 
   //temperature sensor
-  temp = analogRead(tempSensor);
-  temp = temp/2.046 - 50.0;
+  //temp = analogRead(tempSensor);
+  float reading = analogRead(tempSensor);
+  temp = reading/2.046 - 50.0;
   
   //==============OUTPUTS==============
-  //buzzer
+  Serial.print("UV: "); Serial.println(uvLight);
+  Serial.print("Visible: "); Serial.println(visLight);
+  Serial.print("Temp: "); Serial.println(temp);
+  
   if(uvLight >= 5){
     tone(buzzer, 1000);
-    delay(3000);
+    delay(1000);
+    noTone(buzzer);
+    delay(1000);
   }
-  else if(uvLight >= 2){
-    tone(buzzer, 1000);
-    delay(1500);
+  else if(uvLight >= 3){
+    tone(buzzer, 500);
+    delay(500);
+    noTone(buzzer);
+    delay(2000);
   }
   else{
-    tone(buzzer, 1000);
-    delay(750);
+    tone(buzzer, 250);
+    delay(250);
+    noTone(buzzer);
+    delay(4000);
   }
-  noTone(buzzer);
-  delay(1000);
-  
   //led output for the first led, will indicate temperature
   //from blue at low temps to red at hot temps
-  if(temp >= 27){
+  if(temp >= 75){
     strip.setPixelColor(0, red);
     strip.show();
   }
-  else if(temp >= 22){
-    strip.setPixelColor(0, purple);
+  else if(temp >= 60){
+    strip.setPixelColor(0, green);
     strip.show();
   }
   else{
@@ -94,17 +100,17 @@ void loop() {
   
   //led output for the second led, will indicate visible light
   //from green at low light to orange at high light
- if(visLight >= 220){
-    strip.setPixelColor(1, orange);
+  if(visLight >= 90){
+    strip.setPixelColor(1, red);
     strip.show();
   }
-  else if(visLight >= 200){
-    strip.setPixelColor(1, yellow);
-    strip.show();
-  }
-  else{
+  else if (visLight >= 60){
     strip.setPixelColor(1, green);
     strip.show();
   }
-  delay(10);
+  else{
+    strip.setPixelColor(1, purple);
+    strip.show();
+  }
+  delay(100);
 }
