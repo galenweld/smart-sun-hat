@@ -6,17 +6,19 @@
 #include "Adafruit_SI1145.h"
 #include <Adafruit_NeoPixel.h>
 
-int solarExposure;
-
+// input thresholds
 const int visThresh = 270;
+const int uvThresh = 3;
+const int tempThresh = 250;
 
-const int highLight = 50;
-const int highWarning = 100;
+// warning thresholds
+const int highLight = 100;
+const int highWarning = 200;
 
-const int lowLight = -50;
-const int lowWarning = -100;
+const int lowLight = -200;
+const int lowWarning = -300;
 
-const int uvThreshold = 3;
+int solarExposure;
 
 //pins
 const int buzzer = 6; //buzzer to pin 6
@@ -64,6 +66,7 @@ void loop() {
   visLight = uv.readVisible();
   uvLight = uv.readUV();
   uvLight /= 100.0;
+  temp = analogRead(tempSensor);
   
   if (visLight > visThresh) {
     solarExposure ++;
@@ -72,8 +75,12 @@ void loop() {
     solarExposure --;
   }
 
-  if(uvLight > uvThreshold){
+  if (uvLight > uvThresh) {
     solarExposure ++;  
+  }
+
+  if (temp > tempThresh) {
+    solarExposure ++;
   }
   
   //==============OUTPUTS==============
@@ -114,5 +121,5 @@ void loop() {
     tone(buzzer, 250);
   }
 
-  delay(1000);
+  delay(100);
 }
